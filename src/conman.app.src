@@ -1,0 +1,12 @@
+{application, conman, [
+	{description, "poolboy worker for database connections"},
+	{vsn, "0.0.1"},
+	{registered, []},
+	{applications, [
+		kernel,
+		stdlib,
+		poolboy,
+		backoff
+	]},
+	{env, []}
+]}.
