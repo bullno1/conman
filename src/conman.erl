@@ -90,7 +90,7 @@ handle_call({transaction, Fun, Args}, _From, #state{connected = true,
 			{reply, {error, Err}, State#state{conn_state = NewConnState}}
 	end;
 
-handle_call({transaction, _Fun}, _From, #state{connected = false} = State) ->
+handle_call({transaction, _Fun, _Args}, _From, #state{connected = false} = State) ->
 	{reply, {error, disconnected}, State}.
 
 handle_cast(_Req, State) -> {stop, unexpected, State}.
