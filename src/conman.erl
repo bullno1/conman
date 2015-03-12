@@ -6,6 +6,13 @@
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2,
          code_change/3, terminate/2, format_status/2]).
 
+-type pool() ::
+    Name :: (atom() | pid()) |
+    {Name :: atom(), node()} |
+    {local, Name :: atom()} |
+    {global, GlobalName :: any()} |
+    {via, Module :: atom(), ViaName :: any()}.
+
 -callback init(Args::any()) -> State :: any().
 -callback connect(State) -> {ok | {error, any()}, State} when State::any().
 -callback disconnect(State :: any()) -> ok.
@@ -32,16 +39,14 @@ child_spec(PoolId, Module, ConnOpts, PoolOpts, BackoffMin, BackoffMax) ->
 	],
 	poolboy:child_spec(PoolId, [{worker_module, conman} | PoolOpts], WorkerOpts).
 
--spec transaction(Pool, fun((Connection) -> Result)) -> {ok, Result} | {error, Reason} when
-	Pool :: term(),
-	Connection :: term(),
+-spec transaction(Pool, fun((...) -> Result)) -> {ok, Result} | {error, Reason} when
+	Pool :: pool(),
 	Result :: term(),
 	Reason :: term().
 transaction(Pool, Fun) -> transaction(Pool, Fun, []).
 
--spec transaction(Pool, fun((Connection) -> Result), list()) -> {ok, Result} | {error, Reason} when
-	Pool :: term(),
-	Connection :: term(),
+-spec transaction(Pool, fun((...) -> Result), list()) -> {ok, Result} | {error, Reason} when
+	Pool :: pool(),
 	Result :: term(),
 	Reason :: term().
 transaction(Pool, Fun, Args) ->
